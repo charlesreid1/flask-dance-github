@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, print_function
 import json
+import re
 
 import logging
 from lazy import lazy
@@ -178,9 +179,12 @@ class OAuth2ConsumerBlueprint(BaseOAuthConsumerBlueprint):
 
     def login(self):
         log.debug("client_id = %s", self.client_id)
+        '''
+        import pdb; pdb.set_trace()
         self.session.redirect_uri = url_for(
             ".authorized", next=request.args.get('next'), _external=True,
         )
+        '''
         url, state = self.session.authorization_url(
             self.authorization_url, state=self.state,
             **self.authorization_url_params
@@ -232,9 +236,12 @@ class OAuth2ConsumerBlueprint(BaseOAuthConsumerBlueprint):
         self.session._state = state
         del flask.session[state_key]
 
+        '''
         self.session.redirect_uri = url_for(
             ".authorized", next=request.args.get('next'), _external=True,
         )
+        self.session.redirect_uri = re.sub('http:','https:',self.session.redirect_uri)
+        '''
 
         log.debug("client_id = %s", self.client_id)
         log.debug("client_secret = %s", self.client_secret)
